@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ClassicLevelActivity">
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/chess_level_background_top"
+        ></ImageView>
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="365dp"
+        android:layout_height="200dp"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/chess_background_bottom"></ImageView>
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/button_easy"
+        app:srcCompat="@drawable/chess_background_middle"
+        ></ImageView>
+
+    <Button
+        android:id="@+id/button_easy"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="106dp"
+        android:layout_marginBottom="315dp"
+        android:insetLeft="0dp"
+        android:insetTop="0dp"
+        android:insetRight="0dp"
+        android:insetBottom="0dp"
+        android:padding="0dp"
+        app:backgroundTint="#00FFFFFF"
+        app:elevation="0dp"
+        app:icon="@drawable/chess_level_easy"
+        app:iconPadding="0dp"
+        app:iconTintMode="multiply"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView1" />
+
+    <Button
+        android:id="@+id/button_medium"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:insetLeft="0dp"
+        android:insetTop="0dp"
+        android:insetRight="0dp"
+        android:insetBottom="0dp"
+        android:padding="0dp"
+        app:backgroundTint="#00FFFFFF"
+        app:icon="@drawable/chess_level_medium"
+        app:iconPadding="0dp"
+        app:iconTintMode="multiply"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_easy" />
+
+    <Button
+        android:id="@+id/button_hard"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:insetLeft="0dp"
+        android:insetTop="0dp"
+        android:insetRight="0dp"
+        android:insetBottom="0dp"
+        android:padding="0dp"
+        app:backgroundTint="#00FFFFFF"
+        app:icon="@drawable/chess_level_hard"
+        app:iconPadding="0dp"
+        app:iconTintMode="multiply"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_medium" />
+
+    <Button
+        android:id="@+id/button_menu"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="77dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="4dp"
+        app:backgroundTint="#00FFFFFF"
+        app:icon="@drawable/chess_level_back_to_menu"
+        app:iconTintMode="multiply"
+        app:layout_constraintEnd_toEndOf="@id/button_hard"
+        app:layout_constraintTop_toBottomOf="@+id/button_hard" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
