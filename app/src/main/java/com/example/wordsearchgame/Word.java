@@ -90,6 +90,7 @@ public class Word{
     }
     public int getStatus(){ return status; }
 
+
     @Override
     public boolean equals(Object object){
         if(object instanceof LetterSeries){

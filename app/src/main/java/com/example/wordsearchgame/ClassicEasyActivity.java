@@ -1,14 +1,11 @@
 package com.example.wordsearchgame;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -19,8 +16,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class ClassicEasyActivity extends AppCompatActivity {
     private int[] direction = {0,0};
@@ -295,6 +292,9 @@ public class ClassicEasyActivity extends AppCompatActivity {
                             // changes the letterView.
                             addCorrectView();
                             // remove from the answer
+                            removeFromAnswers(selectedLetters);
+                            setAnswerView(selectedLetters);
+//                            game.deleteWord(new Word(selectedLetters));
                         }
                         // finishes
                         selectedLetters.clear();
@@ -315,12 +315,12 @@ public class ClassicEasyActivity extends AppCompatActivity {
 
                 // judges the answer
                 if(judgeTheAnswer(selectedLetters)) {
-
                     // if it is a correct answer
                     // change the state of letter,
                     // changes the letterView.
                     addCorrectView();
                     // remove from the answer
+
                 }
 
                 clearTempView();
@@ -346,70 +346,169 @@ public class ClassicEasyActivity extends AppCompatActivity {
 //        });
 //    }
 
-    private void getRandomBarColor(){
+    private String getRandomBarColor(){
+        long seed = System.currentTimeMillis();
+        Random random = new Random(seed);
+        int randomColor = random.nextInt(4);
 
+        switch(randomColor){
+            case 0:
+                return "red";
+            case 1:
+                return "blue";
+            case 2:
+                return "green";
+            case 3:
+                return "yellow";
+            default:
+                return "red";
+        }
     }
 
-    private void placeViewAtPos(int X, int Y){
-        getRandomBarColor();
+    private void placeViewAtPos(int X, int Y, String order, int[] size, String color){
+        Resources resources = getResources();
+
         // get direction
+        int imageId = 0;
+//        imageId = resources.getIdentifier("bar_left_red", "drawable", getPackageName());
+        int opt = direction[1] + direction[0] * 3;
+        Log.d("opt", "opt: "+opt+"; "+direction[1]+", "+direction[0]);
+        switch(opt){
+            case 1:
+                // direction: (1,0)
+                if(order == "first"){
+                    imageId = resources.getIdentifier("bar_left_" + color, "drawable", getPackageName());
+                }else if(order == "last"){
+                    imageId = resources.getIdentifier("bar_right_" + color, "drawable", getPackageName());
+                }else{
+                    imageId = resources.getIdentifier("bar_middle_" + color, "drawable", getPackageName());
+                }
+                break;
+            case -2:
+                if(order == "first"){
+                    imageId = resources.getIdentifier("bar_rlb_" + color, "drawable", getPackageName());
+                }else if(order == "last"){
+                    imageId = resources.getIdentifier("bar_rlt_" + color, "drawable", getPackageName());
+                }else{
+                    imageId = resources.getIdentifier("bar_lrm_" + color, "drawable", getPackageName());
+                }
+                break;
+            case -3:
+                if(order == "first"){
+                    imageId = resources.getIdentifier("bar_bottom_" + color, "drawable", getPackageName());
+                }else if(order == "last"){
+                    imageId = resources.getIdentifier("bar_top_" + color, "drawable", getPackageName());
+                }else{
+                    imageId = resources.getIdentifier("bar_middle_" + color, "drawable", getPackageName());
+                }
+                break;
+            case -4:
+                if(order == "first"){
+                    imageId = resources.getIdentifier("bar_lrb_" + color, "drawable", getPackageName());
+                }else if(order == "last"){
+                    imageId = resources.getIdentifier("bar_lrt_" + color, "drawable", getPackageName());
+                }else{
+                    imageId = resources.getIdentifier("bar_lrm_" + color, "drawable", getPackageName());
+                }
+                break;
+            case -1:
+                if(order == "first"){
+                    imageId = resources.getIdentifier("bar_right_" + color, "drawable", getPackageName());
+                }else if(order == "last"){
+                    imageId = resources.getIdentifier("bar_left_" + color, "drawable", getPackageName());
+                }else{
+                    imageId = resources.getIdentifier("bar_middle_" + color, "drawable", getPackageName());
+                }
+                break;
+            case 2:
+                if(order == "first"){
+                    imageId = resources.getIdentifier("bar_lrt_" + color, "drawable", getPackageName());
+                }else if(order == "last"){
+                    imageId = resources.getIdentifier("bar_lrb_" + color, "drawable", getPackageName());
+                }else{
+                    imageId = resources.getIdentifier("bar_lrm_" + color, "drawable", getPackageName());
+                }
+                break;
+            case 3:
+                if(order == "first"){
+                    imageId = resources.getIdentifier("bar_top_" + color, "drawable", getPackageName());
+                }else if(order == "last"){
+                    imageId = resources.getIdentifier("bar_bottom_" + color, "drawable", getPackageName());
+                }else{
+                    imageId = resources.getIdentifier("bar_middle_" + color, "drawable", getPackageName());
+                }
+                break;
+            case 4:
+                if(order == "first"){
+                    imageId = resources.getIdentifier("bar_rlt_" + color, "drawable", getPackageName());
+                }else if(order == "last"){
+                    imageId = resources.getIdentifier("bar_rlb_" + color, "drawable", getPackageName());
+                }else{
+                    imageId = resources.getIdentifier("bar_lrm_" + color, "drawable", getPackageName());
+                }
+                break;
+        }
 
         ImageView barImageView = new ImageView(this);
-        barImageView.setImageResource(R.drawable.bar_test_2);
+//        barImageView.setImageResource(R.drawable.bar_left_red);
+        barImageView.setImageResource(imageId);
         ConstraintLayout constraintLayout = findViewById(R.id.ghost_classic_easy_layout);
 
-//        barImageView.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                float fX = X-((float)barImageView.getWidth()/2);
-//                float fY = Y-((float)barImageView.getHeight()/2);
-//                Log.d("barImageView", ""+barImageView.getWidth()+", "+barImageView.getHeight());
-//            }
-//        });
-
-//        float fX = X-((float)barImageView.getWidth()/2);
-//        float fY = Y-((float)barImageView.getHeight()/2);
-
-//        Log.d("barImageView", ""+barParam[0]+", "+barParam[1]);
         barImageView.setX(X-(float)(barParam[0])/2);
         barImageView.setY(Y-(float)(barParam[1])/2);
+
+        if(size[0] != 0 && size[1] != 0){
+            // set size
+        }
         constraintLayout.addView(barImageView);
     }
 
-    private void placeViewAtLetter(Letter letter){
+    private void placeViewAtLetter(Letter letter, String order, String color){
         Resources resources = getResources();
         int letterViewID = resources.getIdentifier("letter_easy_" + letter.getPos()[1] + letter.getPos()[0], "id", getPackageName());
 
+        /*calculate the position and parameter(size) of the view*/
         // get size of letter
         ImageView letterImageView = findViewById(letterViewID);
         int width = letterImageView.getWidth();
         int height = letterImageView.getHeight();
-        Log.d("letterSize", ""+width+", "+height);
+//        Log.d("letterSize", ""+width+", "+height);
 
         // get pos of letter
         int letterPosX = letter.getViewPos()[2];
         int letterPosY = letter.getViewPos()[0];
-        Log.d("letterPos", ""+letterPosX+", "+letterPosY);
+//        Log.d("letterPos", ""+letterPosX+", "+letterPosY);
 
         // get center of letter
         int letterCenterX = letterPosX + (height / 2);
         int letterCenterY = letterPosY + (width / 2);
-        Log.d("width", ""+width+", "+height);
+//        Log.d("width", ""+width+", "+height);
 
-        placeViewAtPos(letterCenterY, letterCenterX);
+        // calculate the size of the view:
+        int[] size = {0, 0}; // width, height
+        if(order == "middle"){
+            // The left of its left letterView to the right of its right letter view
+
+            // Then rotate 45 degree
+
+        }
+
+        placeViewAtPos(letterCenterY, letterCenterX, order, size, color);
     }
 
     private void addCorrectView(){
+        String color = getRandomBarColor();
         for(int i = 0; i < selectedLetters.size(); i++){
             if(i == 0){
-                // add single round view
-                placeViewAtLetter(selectedLetters.get(i));
-//                placeViewAt(selectedLetters.get(i).getViewPos());
+                // for the very first letter add single round view
+                placeViewAtLetter(selectedLetters.get(i), "first", color);
             }else if(i == (selectedLetters.size()-1)){
-                // add single round view
+                // for the last one, add single round view
+                placeViewAtLetter(selectedLetters.get(i), "last", color);
             }
             else{
-                // add none round view
+                // for the middle ones, add none round view
+                placeViewAtLetter(selectedLetters.get(i), "middle", color);
             }
         }
     }
@@ -466,6 +565,17 @@ public class ClassicEasyActivity extends AppCompatActivity {
         return returnVal;
     }
 
+    private void removeFromAnswers(ArrayList<Letter> selectedLetters){
+
+    }
+    private void setAnswerView(ArrayList<Letter> selectedLetters){
+        LetterSeries selectedSeries = new LetterSeries(selectedLetters);
+        for(Word eachWord: game.getWords()){
+            if(eachWord.equals(selectedSeries)){
+            }
+        }
+    }
+
     private boolean judgeTheAnswer(ArrayList<Letter> selectedLetters){
         LetterSeries selectedSeries = new LetterSeries(selectedLetters);
         for(Word eachWord: game.getWords()){
@@ -513,11 +623,6 @@ public class ClassicEasyActivity extends AppCompatActivity {
                 letterImageView.setImageResource(newLetterImageId);
             }
         }
-
-//        if(letterImageView != null){
-//            letterImageView.setImageResource(letter.getLetterTempImageId());
-//        }
-
     }
 
     private void clearTempView(){
@@ -531,7 +636,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
             // for the view of letter found, set the view to the original one.
             int newLetterImageId = 0;
             if(letterImageView != null){
-                Log.d("letterImageView", "not null");
+//                Log.d("letterImageView", "not null");
                 if(letter.getCharLetter() == 'z'){
                     newLetterImageId=resources.getIdentifier("_" + (char)(letter.getCharLetter()), "drawable", getPackageName());
                 }else if(letter.getCharLetter() == 'Z'){
@@ -542,18 +647,12 @@ public class ClassicEasyActivity extends AppCompatActivity {
                     newLetterImageId=resources.getIdentifier("" + (char)(letter.getCharLetter()+32), "drawable", getPackageName());
                 }
 
-                Log.d("newLetterImageId", ""+newLetterImageId);
+//                Log.d("newLetterImageId", ""+newLetterImageId);
                 if(newLetterImageId != 0 ){
                     letterImageView.setImageResource(newLetterImageId);
                 }
             }
         }
-
-//        Resources resources = getResources();
-//        int orgLetterImageId = resources.getIdentifier("letter_easy_" + letter.getPos()[1] + letter.getPos()[0]+"_gray", "id", getPackageName());
-//        ImageView letterImageView = (ImageView) findViewById(orgLetterImageId);
-//        int newLetterImageId = resources.getIdentifier("letter_easy_" + letter.getPos()[1] + letter.getPos()[0], "id", getPackageName());
-//        letterImageView.setImageResource(newLetterImageId);
     }
 
     private void addColorBar(ArrayList<Letter> selectedLetters){
@@ -568,71 +667,4 @@ public class ClassicEasyActivity extends AppCompatActivity {
 
 
     }
-
 }
-
-
-//public class ClassicEasyActivity extends AppCompatActivity {
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_classic_easy);
-//        // setContentView(R.layout.activity_classic);
-//
-////        Intent intent = getIntent();
-////        intent.getIntExtra("difficulty", 0);
-//
-////        // getView from layout: activity_classic.xml:
-////        LayoutInflater from = LayoutInflater.from(this);
-////        View classicActivityView = from.inflate(R.layout.activity_classic, null);
-//        //-----------------------------------------------------------------------
-//        LayoutInflater inflater = getLayoutInflater();
-//        ConstraintLayout mainLayout = (ConstraintLayout) inflater.inflate(R.layout.activity_classic_easy, null);
-//
-//        // get data from last activity: difficulty level:
-//        Intent intent = getIntent();
-//        int difficulty = intent.getIntExtra("difficulty", 0);
-//        Game game = new Game(difficulty,this,"Classic");
-//
-//        for(Letter[] eachRow:game.getLetterMatrix().getMat()){
-//            // For each row, creates a horizontal linearLayout
-//            LinearLayout linearLayout = (LinearLayout) inflater.inflate(R.layout.classic_row, null).findViewById(R.id.row);
-//            // For each row, add views in the horizontal linearLayout
-//            for(Letter eachLetter:eachRow){
-//                // Create image view, set parameters and set constraints
-//                ImageView letterImageView = new ImageView(this);
-//                letterImageView.setImageResource(eachLetter.getLetterImageId());
-////                ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-//                ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(50,50);
-//                letterImageView.setLayoutParams(params);
-//                // linearLayout.addView(letterImageView, ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-//                // Add image view to linearLayout:
-//                linearLayout.addView(letterImageView);
-//            }
-//            ConstraintSet constraintSet = new ConstraintSet();
-//            constraintSet.connect(linearLayout.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT);
-//            constraintSet.connect(linearLayout.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT);
-//            mainLayout.addView(linearLayout, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-//        }
-//        // ----------------------------------------------------------
-////        for(Letter[] eachRow:game.getLetterMatrix().getMat()){
-////            // For each row, creates a horizontal linearLayout
-////            LinearLayout linearLayout = new LinearLayout(this);
-////            linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-////            linearLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-////            linearLayout.setGravity(Gravity.CENTER );
-////            // For each row, add views in the horizontal linearLayout
-////            for(Letter eachLetter:eachRow){
-////                ImageView letterImageView = (ImageView)findViewById(eachLetter.getLetterImageId());
-////                linearLayout.addView(letterImageView);
-////            }
-////        }
-//        // setContentView(R.layout.activity_classic);
-//
-////        setContentView(R.layout.activity_classic);
-//
-//
-//
-//    }
-//}

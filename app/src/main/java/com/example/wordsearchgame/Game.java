@@ -64,6 +64,14 @@ public class Game {
     }
     public LetterMatrix getLetterMatrix(){ return this.letterMatrix; }
 
+//    public void deleteWord(Word wordToDelete){
+//        for(Word eachWord:words){
+//            if(eachWord.equals(wordToDelete)){
+//                words.remove(eachWord);
+//            }
+//        }
+//    }
+
     public void printWords(){
         for(Word eachWord: words){
             System.out.println("wordAnswer:"+eachWord.getWordString());
