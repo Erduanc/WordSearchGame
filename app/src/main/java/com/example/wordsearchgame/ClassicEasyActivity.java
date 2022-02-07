@@ -2,6 +2,7 @@ package com.example.wordsearchgame;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -21,17 +22,16 @@ import java.util.Random;
 
 public class ClassicEasyActivity extends AppCompatActivity {
     private int[] direction = {0,0};
-//    private ArrayList<int[]> letterViewPoses;
-//    private ArrayList<Letter> letters = new ArrayList<Letter>();
     private ArrayList<Letter> selectedLetters = new ArrayList<Letter>();
     private Game game;
-    private int[] barParam = {74,74};
-
+    private int[] barParam1 = {74,74};
+    private int[] barParam2 = {105, 105};
+//    private ArrayList<TextView> answers = new ArrayList<>();
     final int[] gridBounds = {-1,-1,-1,-1};
 
-    public ArrayList<Letter> getSelectedLetters(){
-        return selectedLetters;
-    }
+//    public ArrayList<Letter> getSelectedLetters(){
+//        return selectedLetters;
+//    }
 
 
     @Override
@@ -292,8 +292,9 @@ public class ClassicEasyActivity extends AppCompatActivity {
                             // changes the letterView.
                             addCorrectView();
                             // remove from the answer
-                            removeFromAnswers(selectedLetters);
                             setAnswerView(selectedLetters);
+                            removeFromAnswers(selectedLetters);
+
 //                            game.deleteWord(new Word(selectedLetters));
                         }
                         // finishes
@@ -320,7 +321,8 @@ public class ClassicEasyActivity extends AppCompatActivity {
                     // changes the letterView.
                     addCorrectView();
                     // remove from the answer
-
+                    setAnswerView(selectedLetters);
+                    removeFromAnswers(selectedLetters);
                 }
 
                 clearTempView();
@@ -371,8 +373,10 @@ public class ClassicEasyActivity extends AppCompatActivity {
         // get direction
         int imageId = 0;
 //        imageId = resources.getIdentifier("bar_left_red", "drawable", getPackageName());
-        int opt = direction[1] + direction[0] * 3;
-        Log.d("opt", "opt: "+opt+"; "+direction[1]+", "+direction[0]);
+        int opt = direction[0] + direction[1] * 3;
+        Log.d("opt", "opt: "+opt+"; "+direction[0]+", "+direction[1]);
+
+        ImageView barImageView = new ImageView(this);
         switch(opt){
             case 1:
                 // direction: (1,0)
@@ -383,33 +387,41 @@ public class ClassicEasyActivity extends AppCompatActivity {
                 }else{
                     imageId = resources.getIdentifier("bar_middle_" + color, "drawable", getPackageName());
                 }
+                barImageView.setX(X-(float)(barParam1[0])/2);
+                barImageView.setY(Y-(float)(barParam1[1])/2);
                 break;
             case -2:
                 if(order == "first"){
-                    imageId = resources.getIdentifier("bar_rlb_" + color, "drawable", getPackageName());
+                    imageId = resources.getIdentifier("bar_lrt_" + color, "drawable", getPackageName());
                 }else if(order == "last"){
-                    imageId = resources.getIdentifier("bar_rlt_" + color, "drawable", getPackageName());
+                    imageId = resources.getIdentifier("bar_lrb_" + color, "drawable", getPackageName());
                 }else{
                     imageId = resources.getIdentifier("bar_lrm_" + color, "drawable", getPackageName());
                 }
+                barImageView.setX(X-(float)(barParam2[0])/2);
+                barImageView.setY(Y-(float)(barParam2[1])/2);
                 break;
             case -3:
                 if(order == "first"){
-                    imageId = resources.getIdentifier("bar_bottom_" + color, "drawable", getPackageName());
-                }else if(order == "last"){
                     imageId = resources.getIdentifier("bar_top_" + color, "drawable", getPackageName());
+                }else if(order == "last"){
+                    imageId = resources.getIdentifier("bar_bottom_" + color, "drawable", getPackageName());
                 }else{
                     imageId = resources.getIdentifier("bar_middle_" + color, "drawable", getPackageName());
                 }
+                barImageView.setX(X-(float)(barParam1[0])/2);
+                barImageView.setY(Y-(float)(barParam1[1])/2);
                 break;
             case -4:
                 if(order == "first"){
-                    imageId = resources.getIdentifier("bar_lrb_" + color, "drawable", getPackageName());
+                    imageId = resources.getIdentifier("bar_rlt_" + color, "drawable", getPackageName());
                 }else if(order == "last"){
-                    imageId = resources.getIdentifier("bar_lrt_" + color, "drawable", getPackageName());
+                    imageId = resources.getIdentifier("bar_rlb_" + color, "drawable", getPackageName());
                 }else{
                     imageId = resources.getIdentifier("bar_lrm_" + color, "drawable", getPackageName());
                 }
+                barImageView.setX(X-(float)(barParam2[0])/2);
+                barImageView.setY(Y-(float)(barParam2[1])/2);
                 break;
             case -1:
                 if(order == "first"){
@@ -419,43 +431,50 @@ public class ClassicEasyActivity extends AppCompatActivity {
                 }else{
                     imageId = resources.getIdentifier("bar_middle_" + color, "drawable", getPackageName());
                 }
+                barImageView.setX(X-(float)(barParam1[0])/2);
+                barImageView.setY(Y-(float)(barParam1[1])/2);
                 break;
             case 2:
                 if(order == "first"){
-                    imageId = resources.getIdentifier("bar_lrt_" + color, "drawable", getPackageName());
-                }else if(order == "last"){
                     imageId = resources.getIdentifier("bar_lrb_" + color, "drawable", getPackageName());
+                }else if(order == "last"){
+                    imageId = resources.getIdentifier("bar_lrt_" + color, "drawable", getPackageName());
                 }else{
                     imageId = resources.getIdentifier("bar_lrm_" + color, "drawable", getPackageName());
                 }
+                barImageView.setX(X-(float)(barParam2[0])/2);
+                barImageView.setY(Y-(float)(barParam2[1])/2);
                 break;
             case 3:
                 if(order == "first"){
-                    imageId = resources.getIdentifier("bar_top_" + color, "drawable", getPackageName());
-                }else if(order == "last"){
                     imageId = resources.getIdentifier("bar_bottom_" + color, "drawable", getPackageName());
+                }else if(order == "last"){
+                    imageId = resources.getIdentifier("bar_top_" + color, "drawable", getPackageName());
                 }else{
                     imageId = resources.getIdentifier("bar_middle_" + color, "drawable", getPackageName());
                 }
+                barImageView.setX(X-(float)(barParam1[0])/2);
+                barImageView.setY(Y-(float)(barParam1[1])/2);
                 break;
             case 4:
                 if(order == "first"){
-                    imageId = resources.getIdentifier("bar_rlt_" + color, "drawable", getPackageName());
-                }else if(order == "last"){
                     imageId = resources.getIdentifier("bar_rlb_" + color, "drawable", getPackageName());
+                }else if(order == "last"){
+                    imageId = resources.getIdentifier("bar_rlt_" + color, "drawable", getPackageName());
                 }else{
                     imageId = resources.getIdentifier("bar_lrm_" + color, "drawable", getPackageName());
                 }
+                barImageView.setX(X-(float)(barParam2[0])/2);
+                barImageView.setY(Y-(float)(barParam2[1])/2);
                 break;
         }
 
-        ImageView barImageView = new ImageView(this);
-//        barImageView.setImageResource(R.drawable.bar_left_red);
+//        ImageView barImageView = new ImageView(this);
         barImageView.setImageResource(imageId);
         ConstraintLayout constraintLayout = findViewById(R.id.ghost_classic_easy_layout);
 
-        barImageView.setX(X-(float)(barParam[0])/2);
-        barImageView.setY(Y-(float)(barParam[1])/2);
+//        barImageView.setX(X-(float)(barParam[0])/2);
+//        barImageView.setY(Y-(float)(barParam[1])/2);
 
         if(size[0] != 0 && size[1] != 0){
             // set size
@@ -545,7 +564,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
 
 //        Log.d("getDirection", ""+ letters.get(currentPos).getCharLetter() +", "+ letters.get(lastPos).getCharLetter()+": "+x+", "+y);
 
-        return (new int[]{x, y});
+        return (new int[]{y, -x});
     }
 
     public boolean ifConsecutiveToLast(Letter letter){
@@ -566,12 +585,31 @@ public class ClassicEasyActivity extends AppCompatActivity {
     }
 
     private void removeFromAnswers(ArrayList<Letter> selectedLetters){
-
-    }
-    private void setAnswerView(ArrayList<Letter> selectedLetters){
         LetterSeries selectedSeries = new LetterSeries(selectedLetters);
         for(Word eachWord: game.getWords()){
             if(eachWord.equals(selectedSeries)){
+                eachWord.setStatus(1);
+                Log.d("removeFromAnswers",eachWord.getWordString());
+            }
+        }
+    }
+
+    private void setAnswerView(ArrayList<Letter> selectedLetters){
+        Log.d("setAnswerView", "in method");
+        Resources resources = getResources();
+        LetterSeries selectedSeries = new LetterSeries(selectedLetters);
+
+        for(int i = 0; i < game.getWords().size(); i++){
+            Log.d("setAnswerView","in loop");
+            if(game.getWords().get(i).getStatus() == 0 && game.getWords().get(i).equals(selectedSeries)){
+                Log.d("setAnswerView","equals");
+                int textViewId = resources.getIdentifier("word_easy_"+(i+1),"id",getPackageName());
+                if(textViewId != 0){
+                    Log.d("setAnswerView","not 0");
+                    TextView textView = (TextView) findViewById(textViewId);
+                    textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+//                    textView.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                }
             }
         }
     }
@@ -579,7 +617,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
     private boolean judgeTheAnswer(ArrayList<Letter> selectedLetters){
         LetterSeries selectedSeries = new LetterSeries(selectedLetters);
         for(Word eachWord: game.getWords()){
-            if(eachWord.equals(selectedSeries)){
+            if(eachWord.getStatus() == 0 && eachWord.equals(selectedSeries)){
                 Log.d("judgeTheAnswer","true");
                 return true;
             }
@@ -664,7 +702,5 @@ public class ClassicEasyActivity extends AppCompatActivity {
         // change former bar.
 
         // add round bar
-
-
     }
 }
