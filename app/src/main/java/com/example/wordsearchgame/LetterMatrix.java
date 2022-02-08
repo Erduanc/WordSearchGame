@@ -103,7 +103,8 @@ public class LetterMatrix {
         for(int i=0; i < word.getWordLen(); i++){
             word.getWordLetters().get(i).setPos(letterPoses[i]);
         }
-
+        word.setStartPos(word.getWordLetters());
+        word.setEndPos(word.getWordLetters());
 //        int k = 0;
 //        for(int[] eachPos:letterPoses){
 //            if(k < word.getWordLen()){ word.getWordLetters().get(k).setPos(eachPos); }

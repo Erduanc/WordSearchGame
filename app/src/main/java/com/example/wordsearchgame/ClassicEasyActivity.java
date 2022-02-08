@@ -9,13 +9,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 //import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -23,16 +24,19 @@ import java.util.Random;
 public class ClassicEasyActivity extends AppCompatActivity {
     private int[] direction = {0,0};
     private ArrayList<Letter> selectedLetters = new ArrayList<Letter>();
-    private Game game;
+    private Game game = null;
     private int[] barParam1 = {74,74};
     private int[] barParam2 = {105, 105};
+    private int[] barParam3 = {74, 105};
 //    private ArrayList<TextView> answers = new ArrayList<>();
     final int[] gridBounds = {-1,-1,-1,-1};
 
 //    public ArrayList<Letter> getSelectedLetters(){
 //        return selectedLetters;
 //    }
-
+//    public synchronized void increaseI(){
+//        i++;
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +109,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
                     }
                 }
 
-//                Log.d("eachLetter",String.valueOf(eachLetter.getCharLetter()));
+//                Button buttonHint = (Button)findViewById(R.id.button_hint_easy);
                 // replace the old view with the new view
                 letterImageView.setImageResource(newLetterImageId);
                 // post, then get and set the positions of letterImageView:
@@ -114,6 +118,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
                     public void run() {
                         while(gridBounds[0]==-1 || gridBounds[1]==-1 || gridBounds[2]==-1 || gridBounds[3]==-1){
                             try {
+
                                 Thread.sleep(100);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
@@ -149,66 +154,102 @@ public class ClassicEasyActivity extends AppCompatActivity {
             }
         }
 
+        // init buttons: hint:
+        Button buttonHint = (Button)findViewById(R.id.button_hint_easy);
+        buttonHint.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if(game != null){
+                    for(Word eachWord:game.getWords()){
+                        if(eachWord.getStatus() == 0){
+                            setHintView(eachWord);
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+////        //init buttons: pause:
+////        Button buttonPause = (Button)findViewById(R.id.button_pause_easy);
+////        buttonHint.setOnClickListener(new View.OnClickListener(){
+////            @Override
+////            public void onClick(View v){
+//////                Intent intent = new Intent(ClassicLevelActivity.this, ClassicEasyActivity.class);
+//////                intent.putExtra("difficulty", 0);
+//////                startActivity(intent);
+////            }
+////        });
+
 //        initBarParam();
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    private void setHintView(Word word){
+        Resources resources = getResources();
+        // task1: set letterView's source to white
+        int letterImageViewId = resources.getIdentifier("letter_easy_" + word.getStartPos()[1] + word.getStartPos()[0], "id", getPackageName());
+        ImageView letterImageView = findViewById(letterImageViewId);
+        int newSrcId = getLetterSrcIdByLetter(word.getWordLetters().get(0), "_white");
+        letterImageView.setImageResource(newSrcId);
 
-        // Capture a press down movement
-        // If the press down is within a letterView
-            // Change the appearance of the letter
-            // Capture the movement
-                /*
-                get the position of the movement
-                if within a letterView:
-                    Sure about one of the 8 cases (directions)
-                    Sure about the scope of selection:
-                        in the same row, col, or diagonal line.
-                    if out of the scope, then the selection fails (or completes, judges)
-                    else:
-                        capture the leaving of press (or out of the layout)
-                        selection completes
-                        remove redundancy
-                        judges the answer
-                        if it is a correct answer
-                            change the state of letter, changes the letterView.
-                * */
-        // Else not within a letterView: nothing happens
+        // task2: add hint imageView as "background" of white letterViews
+        int directX = word.getEndPos()[1] - word.getStartPos()[1];
+        int directY = -(word.getEndPos()[0] - word.getStartPos()[0]);
+        if(directX!=0){
+            directX = directX/Math.abs(directX);
+        }
+        if(directY!=0){
+            directY = directY/Math.abs(directY);
+        }
+        Log.d("firstLetterPos", ""+word.getWordLetters().get(0).getPos()[0]+", "+word.getWordLetters().get(0).getPos()[1]);
+        Letter letter = game.getLetterMatrix().getMat()[word.getWordLetters().get(0).getPos()[0]][word.getWordLetters().get(0).getPos()[1]];
+
+//        placeImageViewAtLetter(word.getWordLetters().get(0), barParam2, "hint_"+(directX+1)+(directY+1),"ghost_classic_easy_layout");
+        int opt = directX + directY*3;
+        Log.d("optHint", ""+opt+": "+directX+", "+directY);
+        switch(opt){
+            case 1:
+                placeImageViewAtLetter(letter, barParam1, "hint_"+(directX+1)+(directY+1),"ghost_classic_easy_layout");
+                break;
+            case -3:
+                placeImageViewAtLetter(letter, barParam1, "hint_"+(directX+1)+(directY+1),"ghost_classic_easy_layout");
+                break;
+            case -1:
+                placeImageViewAtLetter(letter, new int[]{barParam2[0], barParam1[0]}, "hint_"+(directX+1)+(directY+1),"ghost_classic_easy_layout");
+                break;
+            case 3:
+                placeImageViewAtLetter(letter, new int[]{barParam1[0], barParam2[0]}, "hint_"+(directX+1)+(directY+1),"ghost_classic_easy_layout");
+                break;
+            case 2:
+            case -2:
+            case -4:
+            case 4:
+                placeImageViewAtLetter(letter, barParam1, "hint_"+(directX+1)+(directY+1),"ghost_classic_easy_layout");
+                break;
+        }
     }
 
+    private int getLetterSrcIdByLetter(Letter letter, String padding){
+        Resources resources = getResources();
+        int newLetterImageId=0;
+        if(letter.getCharLetter() == 'z'){
+            newLetterImageId=resources.getIdentifier("_" + (char)(letter.getCharLetter())+padding, "drawable", getPackageName());
+        }else if(letter.getCharLetter() == 'Z'){
+            newLetterImageId=resources.getIdentifier("_" + (char)(letter.getCharLetter()+32)+padding, "drawable", getPackageName());
+        }else if(letter.getCharLetter() >= 'a' && letter.getCharLetter()<= 'y'){
+            newLetterImageId=resources.getIdentifier("" + (char)(letter.getCharLetter())+padding, "drawable", getPackageName());
+        }else if(letter.getCharLetter() >= 'A' && letter.getCharLetter()<= 'Y'){
+            newLetterImageId=resources.getIdentifier("" + (char)(letter.getCharLetter()+32)+padding, "drawable", getPackageName());
+        }
 
-//    float x1 = 0;
-//    float x2 = 0;
-//    float y1 = 0;
-//    float y2 = 0;
-//    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//        Log.d("inOnTouch","inOnTouch");
-//        //继承了Activity的onTouchEvent方法，直接监听点击事件
-//        if(event.getAction() == MotionEvent.ACTION_DOWN) {
-//            //当手指按下的时候
-//            x1 = event.getX();
-//            y1 = event.getY();
-//        }
-//        if(event.getAction() == MotionEvent.ACTION_UP) {
-//            //当手指离开的时候
-//            x2 = event.getX();
-//            y2 = event.getY();
-//            if(y1 - y2 > 50) {
-//                Toast.makeText(ClassicEasyActivity.this, "向上^滑", Toast.LENGTH_SHORT).show();
-//            } else if(y2 - y1 > 50) {
-//                Toast.makeText(ClassicEasyActivity.this, "向下v滑", Toast.LENGTH_SHORT).show();
-//            } else if(x1 - x2 > 50) {
-//                Toast.makeText(ClassicEasyActivity.this, "向左<滑", Toast.LENGTH_SHORT).show();
-//            } else if(x2 - x1 > 50) {
-//                Toast.makeText(ClassicEasyActivity.this, "向右>滑", Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//        return super.onTouchEvent(event);
-//    }
+        return newLetterImageId;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -290,7 +331,8 @@ public class ClassicEasyActivity extends AppCompatActivity {
                             // if it is a correct answer
                             // change the state of letter,
                             // changes the letterView.
-                            addCorrectView();
+//                            addCorrectView();
+                            placeColorfulBarAtWord();
                             // remove from the answer
                             setAnswerView(selectedLetters);
                             removeFromAnswers(selectedLetters);
@@ -319,7 +361,8 @@ public class ClassicEasyActivity extends AppCompatActivity {
                     // if it is a correct answer
                     // change the state of letter,
                     // changes the letterView.
-                    addCorrectView();
+//                    addCorrectView();
+                    placeColorfulBarAtWord();
                     // remove from the answer
                     setAnswerView(selectedLetters);
                     removeFromAnswers(selectedLetters);
@@ -332,21 +375,6 @@ public class ClassicEasyActivity extends AppCompatActivity {
 //        return super.dispatchTouchEvent(event);
         return super.onTouchEvent(event);
     }
-
-//    private void initBarParam(){
-//        ImageView barImageView = new ImageView(this);
-//        barImageView.setImageResource(R.drawable.bar_test);
-//        ConstraintLayout constraintLayout = findViewById(R.id.activity_classic_easy_layout);
-//
-//        barImageView.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                barParam[0] = barImageView.getWidth();
-//                barParam[1] = barImageView.getHeight();
-//                Log.d("barImageView", ""+barImageView.getWidth()+", "+barImageView.getHeight());
-//            }
-//        });
-//    }
 
     private String getRandomBarColor(){
         long seed = System.currentTimeMillis();
@@ -367,130 +395,38 @@ public class ClassicEasyActivity extends AppCompatActivity {
         }
     }
 
-    private void placeViewAtPos(int X, int Y, String order, int[] size, String color){
-        Resources resources = getResources();
-
-        // get direction
-        int imageId = 0;
-//        imageId = resources.getIdentifier("bar_left_red", "drawable", getPackageName());
-        int opt = direction[0] + direction[1] * 3;
-        Log.d("opt", "opt: "+opt+"; "+direction[0]+", "+direction[1]);
-
-        ImageView barImageView = new ImageView(this);
-        switch(opt){
-            case 1:
-                // direction: (1,0)
-                if(order == "first"){
-                    imageId = resources.getIdentifier("bar_left_" + color, "drawable", getPackageName());
-                }else if(order == "last"){
-                    imageId = resources.getIdentifier("bar_right_" + color, "drawable", getPackageName());
-                }else{
-                    imageId = resources.getIdentifier("bar_middle_" + color, "drawable", getPackageName());
-                }
-                barImageView.setX(X-(float)(barParam1[0])/2);
-                barImageView.setY(Y-(float)(barParam1[1])/2);
-                break;
-            case -2:
-                if(order == "first"){
-                    imageId = resources.getIdentifier("bar_lrt_" + color, "drawable", getPackageName());
-                }else if(order == "last"){
-                    imageId = resources.getIdentifier("bar_lrb_" + color, "drawable", getPackageName());
-                }else{
-                    imageId = resources.getIdentifier("bar_lrm_" + color, "drawable", getPackageName());
-                }
-                barImageView.setX(X-(float)(barParam2[0])/2);
-                barImageView.setY(Y-(float)(barParam2[1])/2);
-                break;
-            case -3:
-                if(order == "first"){
-                    imageId = resources.getIdentifier("bar_top_" + color, "drawable", getPackageName());
-                }else if(order == "last"){
-                    imageId = resources.getIdentifier("bar_bottom_" + color, "drawable", getPackageName());
-                }else{
-                    imageId = resources.getIdentifier("bar_middle_" + color, "drawable", getPackageName());
-                }
-                barImageView.setX(X-(float)(barParam1[0])/2);
-                barImageView.setY(Y-(float)(barParam1[1])/2);
-                break;
-            case -4:
-                if(order == "first"){
-                    imageId = resources.getIdentifier("bar_rlt_" + color, "drawable", getPackageName());
-                }else if(order == "last"){
-                    imageId = resources.getIdentifier("bar_rlb_" + color, "drawable", getPackageName());
-                }else{
-                    imageId = resources.getIdentifier("bar_lrm_" + color, "drawable", getPackageName());
-                }
-                barImageView.setX(X-(float)(barParam2[0])/2);
-                barImageView.setY(Y-(float)(barParam2[1])/2);
-                break;
-            case -1:
-                if(order == "first"){
-                    imageId = resources.getIdentifier("bar_right_" + color, "drawable", getPackageName());
-                }else if(order == "last"){
-                    imageId = resources.getIdentifier("bar_left_" + color, "drawable", getPackageName());
-                }else{
-                    imageId = resources.getIdentifier("bar_middle_" + color, "drawable", getPackageName());
-                }
-                barImageView.setX(X-(float)(barParam1[0])/2);
-                barImageView.setY(Y-(float)(barParam1[1])/2);
-                break;
-            case 2:
-                if(order == "first"){
-                    imageId = resources.getIdentifier("bar_lrb_" + color, "drawable", getPackageName());
-                }else if(order == "last"){
-                    imageId = resources.getIdentifier("bar_lrt_" + color, "drawable", getPackageName());
-                }else{
-                    imageId = resources.getIdentifier("bar_lrm_" + color, "drawable", getPackageName());
-                }
-                barImageView.setX(X-(float)(barParam2[0])/2);
-                barImageView.setY(Y-(float)(barParam2[1])/2);
-                break;
-            case 3:
-                if(order == "first"){
-                    imageId = resources.getIdentifier("bar_bottom_" + color, "drawable", getPackageName());
-                }else if(order == "last"){
-                    imageId = resources.getIdentifier("bar_top_" + color, "drawable", getPackageName());
-                }else{
-                    imageId = resources.getIdentifier("bar_middle_" + color, "drawable", getPackageName());
-                }
-                barImageView.setX(X-(float)(barParam1[0])/2);
-                barImageView.setY(Y-(float)(barParam1[1])/2);
-                break;
-            case 4:
-                if(order == "first"){
-                    imageId = resources.getIdentifier("bar_rlb_" + color, "drawable", getPackageName());
-                }else if(order == "last"){
-                    imageId = resources.getIdentifier("bar_rlt_" + color, "drawable", getPackageName());
-                }else{
-                    imageId = resources.getIdentifier("bar_lrm_" + color, "drawable", getPackageName());
-                }
-                barImageView.setX(X-(float)(barParam2[0])/2);
-                barImageView.setY(Y-(float)(barParam2[1])/2);
-                break;
+    private boolean placeImageViewAtPos(int X, int Y, int width, int height, int imageViewId, int viewGroupId){
+        Log.d("imageViewId2", ""+imageViewId);
+        if(imageViewId != 0){
+            // create imageView
+            ImageView imageView = new ImageView(ClassicEasyActivity.this);
+            imageView.setImageResource(imageViewId);
+            if(imageView != null){
+                // set Position
+                imageView.setX(X);
+                imageView.setY(Y);
+                // set size:
+                /**/
+                // add to layout
+                ViewGroup viewGroup = findViewById(viewGroupId);
+                viewGroup.addView(imageView);
+                return true;
+            }
         }
-
-//        ImageView barImageView = new ImageView(this);
-        barImageView.setImageResource(imageId);
-        ConstraintLayout constraintLayout = findViewById(R.id.ghost_classic_easy_layout);
-
-//        barImageView.setX(X-(float)(barParam[0])/2);
-//        barImageView.setY(Y-(float)(barParam[1])/2);
-
-        if(size[0] != 0 && size[1] != 0){
-            // set size
-        }
-        constraintLayout.addView(barImageView);
+        return false;
     }
 
-    private void placeViewAtLetter(Letter letter, String order, String color){
+    private boolean placeImageViewAtLetter(Letter letter, int[] param, String imageViewName, String viewGroupName){
+        /*calculate the position and parameter(size) of the view*/
+        // get size of letter
+        if(param.length!=2){ return false; }
+
         Resources resources = getResources();
         int letterViewID = resources.getIdentifier("letter_easy_" + letter.getPos()[1] + letter.getPos()[0], "id", getPackageName());
 
-        /*calculate the position and parameter(size) of the view*/
-        // get size of letter
         ImageView letterImageView = findViewById(letterViewID);
-        int width = letterImageView.getWidth();
-        int height = letterImageView.getHeight();
+        int letterWidth = letterImageView.getWidth();
+        int letterHeight = letterImageView.getHeight();
 //        Log.d("letterSize", ""+width+", "+height);
 
         // get pos of letter
@@ -499,35 +435,148 @@ public class ClassicEasyActivity extends AppCompatActivity {
 //        Log.d("letterPos", ""+letterPosX+", "+letterPosY);
 
         // get center of letter
-        int letterCenterX = letterPosX + (height / 2);
-        int letterCenterY = letterPosY + (width / 2);
+        int letterCenterX = letterPosX + (letterHeight / 2);
+        int letterCenterY = letterPosY + (letterWidth / 2);
+
+        // get the start of the view:
+        int temp = letterCenterX;
+        letterCenterX = letterCenterY;
+        letterCenterY = temp;
+        int viewPosX = letterCenterX-(param[0]/2);
+        int viewPosY = letterCenterY-(param[1]/2);
+
+        // get the size of barView:
+        int height = 0;
+        int width = 0;
+
+        // get the barViewId
+        int imageViewId = resources.getIdentifier(imageViewName, "drawable", getPackageName());
+        Log.d("imageViewId1", ""+imageViewId);
+
+        // get the viewGroupId
+        int viewGroupId = resources.getIdentifier(viewGroupName, "id", getPackageName());
+
+        return placeImageViewAtPos(viewPosX, viewPosY, width, height, imageViewId, viewGroupId);
 //        Log.d("width", ""+width+", "+height);
-
-        // calculate the size of the view:
-        int[] size = {0, 0}; // width, height
-        if(order == "middle"){
-            // The left of its left letterView to the right of its right letter view
-
-            // Then rotate 45 degree
-
-        }
-
-        placeViewAtPos(letterCenterY, letterCenterX, order, size, color);
     }
 
-    private void addCorrectView(){
+    private void placeColorfulBarAtLetter(Letter letter, String order, String color){
+        Resources resources = getResources();
+        String viewGroupName = "ghost_classic_easy_layout";
+        String imageViewName = "";
+
+        int opt = direction[0] + direction[1] * 3;
+        Log.d("opt", "opt: "+opt+"; "+direction[0]+", "+direction[1]);
+
+        switch(opt){
+            case 1:
+                // direction: (1,0)
+                if(order == "first"){
+                    imageViewName = "bar_left_"+color;
+                }else if(order == "last"){
+                    imageViewName = "bar_right_" + color;
+                }else{
+                    imageViewName = "bar_middle_" + color;
+                }
+                placeImageViewAtLetter(letter, barParam1, imageViewName, viewGroupName);
+                break;
+            case -2:
+                if(order == "first"){
+                    imageViewName = "bar_lrt_" + color;
+                    placeImageViewAtLetter(letter, barParam1, imageViewName, viewGroupName);
+                }else if(order == "last"){
+                    imageViewName = "bar_lrb_" + color;
+                    placeImageViewAtLetter(letter, barParam2, imageViewName, viewGroupName);
+                }else{
+                    imageViewName = "bar_lrm_" + color;
+                    placeImageViewAtLetter(letter, barParam2, imageViewName, viewGroupName);
+                }
+                break;
+            case -3:
+                if(order == "first"){
+                    imageViewName = "bar_top_" + color;
+                }else if(order == "last"){
+                    imageViewName = "bar_bottom_" + color;
+                }else{
+                    imageViewName = "bar_middle_" + color;
+                }
+                placeImageViewAtLetter(letter, barParam1, imageViewName, viewGroupName);
+                break;
+            case -4:
+                if(order == "first"){
+                    imageViewName = "bar_rlt_" + color;
+                    placeImageViewAtLetter(letter, new int[]{barParam2[0], barParam1[0]}, imageViewName, viewGroupName);
+
+                }else if(order == "last"){
+                    imageViewName = "bar_rlb_" + color;
+                    placeImageViewAtLetter(letter, new int[]{barParam1[0], barParam2[0]}, imageViewName, viewGroupName);
+
+                }else{
+                    imageViewName = "bar_lrm_" + color;
+                    placeImageViewAtLetter(letter, barParam2, imageViewName, viewGroupName);
+                }
+                break;
+            case -1:
+                if(order == "first"){
+                    imageViewName = "bar_right_" + color;
+                }else if(order == "last"){
+                    imageViewName = "bar_left_" + color;
+                }else{
+                    imageViewName = "bar_middle_" + color;
+                }
+                placeImageViewAtLetter(letter, barParam1, imageViewName, viewGroupName);
+                break;
+            case 2:
+                if(order == "first"){
+                    imageViewName = "bar_lrb_" + color;
+                    placeImageViewAtLetter(letter, barParam2, imageViewName, viewGroupName);
+                }else if(order == "last"){
+                    imageViewName = "bar_lrt_" + color;
+                    placeImageViewAtLetter(letter, barParam1, imageViewName, viewGroupName);
+                }else{
+                    imageViewName = "bar_lrm_" + color;
+                    placeImageViewAtLetter(letter, barParam2, imageViewName, viewGroupName);
+                }
+                break;
+            case 3:
+                if(order == "first"){
+                    imageViewName = "bar_bottom_" + color;
+                }else if(order == "last"){
+                    imageViewName = "bar_top_" + color;
+                }else{
+                    imageViewName = "bar_middle_" + color;
+                }
+                placeImageViewAtLetter(letter, barParam1, imageViewName, viewGroupName);
+                break;
+            case 4:
+                if(order == "first"){
+                    imageViewName = "bar_rlb_" + color;
+                    placeImageViewAtLetter(letter, new int[]{barParam1[0], barParam2[0]}, imageViewName, viewGroupName);
+                }else if(order == "last"){
+                    imageViewName = "bar_rlt_" + color;
+                    placeImageViewAtLetter(letter, new int[]{barParam2[0], barParam1[0]}, imageViewName, viewGroupName);
+                }else{
+                    imageViewName = "bar_lrm_" + color;
+                    placeImageViewAtLetter(letter, barParam2, imageViewName, viewGroupName);
+                }
+                break;
+        }
+        Log.d("imageViewName", ""+imageViewName);
+    }
+
+    private void placeColorfulBarAtWord(){
         String color = getRandomBarColor();
         for(int i = 0; i < selectedLetters.size(); i++){
             if(i == 0){
                 // for the very first letter add single round view
-                placeViewAtLetter(selectedLetters.get(i), "first", color);
+                placeColorfulBarAtLetter(selectedLetters.get(i), "first", color);
             }else if(i == (selectedLetters.size()-1)){
                 // for the last one, add single round view
-                placeViewAtLetter(selectedLetters.get(i), "last", color);
+                placeColorfulBarAtLetter(selectedLetters.get(i), "last", color);
             }
             else{
                 // for the middle ones, add none round view
-                placeViewAtLetter(selectedLetters.get(i), "middle", color);
+                placeColorfulBarAtLetter(selectedLetters.get(i), "middle", color);
             }
         }
     }

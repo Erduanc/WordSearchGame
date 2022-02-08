@@ -100,6 +100,7 @@
         app:srcCompat="@drawable/classic_game_background_bottom"></ImageView>
 
     <Button
+        android:id="@+id/button_hint_easy"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -119,6 +120,7 @@
         app:layout_constraintStart_toStartOf="parent"></Button>
 
     <Button
+        android:id="@+id/button_pause_easy"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
