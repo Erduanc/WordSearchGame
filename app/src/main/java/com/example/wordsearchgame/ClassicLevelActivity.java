@@ -24,6 +24,7 @@ public class ClassicLevelActivity extends AppCompatActivity {
             public void onClick(View v){
                 Intent intent = new Intent(ClassicLevelActivity.this, MainActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -34,6 +35,7 @@ public class ClassicLevelActivity extends AppCompatActivity {
                 Intent intent = new Intent(ClassicLevelActivity.this, ClassicEasyActivity.class);
                 intent.putExtra("difficulty", 0);
                 startActivity(intent);
+                finish();
             }
         });
 //

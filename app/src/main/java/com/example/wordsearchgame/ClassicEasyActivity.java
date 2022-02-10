@@ -14,6 +14,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.fragment.app.DialogFragment;
 //import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -169,17 +170,15 @@ public class ClassicEasyActivity extends AppCompatActivity {
                 }
             }
         });
-////        //init buttons: pause:
-////        Button buttonPause = (Button)findViewById(R.id.button_pause_easy);
-////        buttonHint.setOnClickListener(new View.OnClickListener(){
-////            @Override
-////            public void onClick(View v){
-//////                Intent intent = new Intent(ClassicLevelActivity.this, ClassicEasyActivity.class);
-//////                intent.putExtra("difficulty", 0);
-//////                startActivity(intent);
-////            }
-////        });
-
+        //init buttons: pause:
+        Button buttonPause = (Button)findViewById(R.id.button_pause_easy);
+        buttonPause.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                showPauseDialog();
+            }
+        });
+//
 //        initBarParam();
 
     }
@@ -249,6 +248,12 @@ public class ClassicEasyActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        showPauseDialog();
     }
 
     @Override
@@ -751,5 +756,14 @@ public class ClassicEasyActivity extends AppCompatActivity {
         // change former bar.
 
         // add round bar
+    }
+
+    public void showPauseDialog()
+    {
+        GameOnPauseDialogFragment pauseDialogFragment = new GameOnPauseDialogFragment(this);
+        pauseDialogFragment.show(getSupportFragmentManager(), "pauseDialogFragment");
+        if(pauseDialogFragment != null && pauseDialogFragment.getIfBtm()){
+            finish();
+        }
     }
 }
