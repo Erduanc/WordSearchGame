@@ -7,6 +7,14 @@
     android:layout_height="match_parent"
     tools:context=".ClassicEasyActivity">
 
+    <com.example.wordsearchgame.MyChronometer
+        android:id="@+id/my_chronometer_classic_easy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ghost_classic_easy_layout"
         android:layout_width="match_parent"
@@ -145,10 +153,9 @@
         android:id="@+id/grid_of_letters_layout"
         android:layout_width="375dp"
         android:layout_height="375dp"
-        android:layout_marginTop="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/my_chronometer_classic_easy">
 
         <ImageView
             android:id="@+id/letter_easy_80"

@@ -14,7 +14,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import androidx.fragment.app.DialogFragment;
+
 //import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,7 +28,8 @@ public class ClassicEasyActivity extends AppCompatActivity {
     private Game game = null;
     private int[] barParam1 = {74,74};
     private int[] barParam2 = {105, 105};
-    private int[] barParam3 = {74, 105};
+    private com.example.wordsearchgame.MyChronometer timer;
+//    private int[] barParam3 = {74, 105};
 //    private ArrayList<TextView> answers = new ArrayList<>();
     final int[] gridBounds = {-1,-1,-1,-1};
 
@@ -68,19 +69,6 @@ public class ClassicEasyActivity extends AppCompatActivity {
 
             }
         });
-//        Log.d("grid", "not null: "+ gridBounds[0]+", "+ gridBounds[1]+", "+ gridBounds[2]+", "+ gridBounds[3] );
-
-
-
-//        // Adjust the size of the grid according to the screen size:
-//        DisplayMetrics displayMetrics = new DisplayMetrics();
-//        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-//        int screenWidth = displayMetrics.widthPixels;
-//
-//        LayoutInflater inflater = getLayoutInflater();
-//        ConstraintLayout grid = (ConstraintLayout) inflater.inflate(R.layout.activity_classic_easy, null);
-//        grid.getLayoutParams().width = screenWidth;
-
 
         Resources resources = getResources();
 
@@ -181,6 +169,15 @@ public class ClassicEasyActivity extends AppCompatActivity {
 //
 //        initBarParam();
 
+        // init Timer:
+//        timer = new MyChronometer(this);
+        timer =  (MyChronometer) findViewById(R.id.my_chronometer_classic_easy);
+        timer.start();
+//        if(timer != null){
+//            ConstraintLayout timerLayout = findViewById(R.id.timer_layout);
+//            timerLayout.addView(timer);
+//        }
+
     }
 
     private void setHintView(Word word){
@@ -242,6 +239,12 @@ public class ClassicEasyActivity extends AppCompatActivity {
         }
 
         return newLetterImageId;
+    }
+    @Override
+    protected void onStart(){
+        super.onStart();
+//        timer.start();
+
     }
 
     @Override
@@ -760,7 +763,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
 
     public void showPauseDialog()
     {
-        GameOnPauseDialogFragment pauseDialogFragment = new GameOnPauseDialogFragment(this);
+        GameOnPauseDialogFragment pauseDialogFragment = new GameOnPauseDialogFragment(this, timer);
         pauseDialogFragment.show(getSupportFragmentManager(), "pauseDialogFragment");
         if(pauseDialogFragment != null && pauseDialogFragment.getIfBtm()){
             finish();

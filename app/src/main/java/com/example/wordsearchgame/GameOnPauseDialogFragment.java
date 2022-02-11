@@ -14,11 +14,29 @@ import androidx.fragment.app.DialogFragment;
 public class GameOnPauseDialogFragment extends DialogFragment{
     Context context;
     boolean ifBtm;
+    MyChronometer timer;
 
-    public GameOnPauseDialogFragment(Context context){
+    public GameOnPauseDialogFragment(Context context, MyChronometer timer){
         super();
+        this.timer = timer;
         this.context = context;
         this.ifBtm = false;
+    }
+
+    @Override
+    public void dismiss(){
+        if(this.timer != null){
+            timer.resume();
+        }
+        super.dismiss();
+    }
+
+    @Override
+    public void show(androidx.fragment.app.FragmentManager manager, String tag){
+        if(this.timer != null){
+            timer.pause();
+        }
+        super.show(manager, tag);
     }
 
     @Override

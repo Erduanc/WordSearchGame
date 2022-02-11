@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MyChronometer">	<!-- 全类名-->>
+        <attr name="text1" format="string"/>	<!-- 属性名 + 属性类型 （由于标题为字符串，所以设置为字符串）-->>
+    </declare-styleable>
+</resources>
