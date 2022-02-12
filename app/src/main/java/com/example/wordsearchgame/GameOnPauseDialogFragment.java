@@ -3,7 +3,6 @@ package com.example.wordsearchgame;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +13,9 @@ import androidx.fragment.app.DialogFragment;
 public class GameOnPauseDialogFragment extends DialogFragment{
     Context context;
     boolean ifBtm;
-    MyChronometer timer;
+    MyChronometerView timer;
 
-    public GameOnPauseDialogFragment(Context context, MyChronometer timer){
+    public GameOnPauseDialogFragment(Context context, MyChronometerView timer){
         super();
         this.timer = timer;
         this.context = context;

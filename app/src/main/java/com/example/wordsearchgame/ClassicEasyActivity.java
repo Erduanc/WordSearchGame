@@ -28,7 +28,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
     private Game game = null;
     private int[] barParam1 = {74,74};
     private int[] barParam2 = {105, 105};
-    private com.example.wordsearchgame.MyChronometer timer;
+    private MyChronometerView timer;
 //    private int[] barParam3 = {74, 105};
 //    private ArrayList<TextView> answers = new ArrayList<>();
     final int[] gridBounds = {-1,-1,-1,-1};
@@ -171,7 +171,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
 
         // init Timer:
 //        timer = new MyChronometer(this);
-        timer =  (MyChronometer) findViewById(R.id.my_chronometer_classic_easy);
+        timer =  (MyChronometerView) findViewById(R.id.my_chronometer_classic_easy);
         timer.start();
 //        if(timer != null){
 //            ConstraintLayout timerLayout = findViewById(R.id.timer_layout);

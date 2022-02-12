@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".ClassicEasyActivity">
 
-    <com.example.wordsearchgame.MyChronometer
+    <com.example.wordsearchgame.MyChronometerView
         android:id="@+id/my_chronometer_classic_easy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
