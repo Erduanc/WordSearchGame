@@ -12,11 +12,11 @@ import android.widget.Button;
 
 public class ClassicLevelActivity extends AppCompatActivity {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chess_level);
-
 
         Button buttonMenu = (Button)findViewById(R.id.button_menu);
         buttonMenu.setOnClickListener(new View.OnClickListener(){

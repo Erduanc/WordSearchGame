@@ -29,9 +29,10 @@ public class ClassicEasyActivity extends AppCompatActivity {
     private int[] barParam1 = {74,74};
     private int[] barParam2 = {105, 105};
     private MyChronometerView timer;
-//    private int[] barParam3 = {74, 105};
-//    private ArrayList<TextView> answers = new ArrayList<>();
+    private ArrayList<Long> times = new ArrayList<Long>();
     final int[] gridBounds = {-1,-1,-1,-1};
+    int foundCount = 0;
+    int hintCount = 0;
 
 //    public ArrayList<Letter> getSelectedLetters(){
 //        return selectedLetters;
@@ -152,6 +153,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
                     for(Word eachWord:game.getWords()){
                         if(eachWord.getStatus() == 0){
                             setHintView(eachWord);
+                            hintCount++;
                             break;
                         }
                     }
@@ -336,14 +338,24 @@ public class ClassicEasyActivity extends AppCompatActivity {
 
                         // judges the answer
                         if(judgeTheAnswer(selectedLetters)) {
-                            // if it is a correct answer
-                            // change the state of letter,
-                            // changes the letterView.
-//                            addCorrectView();
-                            placeColorfulBarAtWord();
-                            // remove from the answer
-                            setAnswerView(selectedLetters);
-                            removeFromAnswers(selectedLetters);
+                            handleCorrectAnswer();
+//                            foundCount++;
+//                            times.add(timer.getNow());
+//                            // if it is a correct answer
+//                            // change the state of letter,
+//                            // changes the letterView.
+////                            addCorrectView();
+//                            placeColorfulBarAtWord();
+//                            // remove from the answer
+//                            setAnswerView(selectedLetters);
+//                            removeFromAnswers(selectedLetters);
+//                            if(foundCount == game.getWords().size()){
+//                                Intent intent = new Intent(ClassicEasyActivity.this, ClassicGameClearedActivity.class);
+//                                intent.putExtra("difficulty", 0);
+//                                intent.putExtra("times", times);
+//                                startActivity(intent);
+//                                finish();
+//                            }
 
 //                            game.deleteWord(new Word(selectedLetters));
                         }
@@ -366,14 +378,20 @@ public class ClassicEasyActivity extends AppCompatActivity {
 
                 // judges the answer
                 if(judgeTheAnswer(selectedLetters)) {
-                    // if it is a correct answer
-                    // change the state of letter,
-                    // changes the letterView.
-//                    addCorrectView();
-                    placeColorfulBarAtWord();
-                    // remove from the answer
-                    setAnswerView(selectedLetters);
-                    removeFromAnswers(selectedLetters);
+                    handleCorrectAnswer();
+//                    foundCount++;
+//                    times.add(timer.getNow());
+//                    // if it is a correct answer
+//                    // change the state of letter,
+//                    // changes the letterView.
+////                    addCorrectView();
+//                    placeColorfulBarAtWord();
+//                    // remove from the answer
+//                    setAnswerView(selectedLetters);
+//                    removeFromAnswers(selectedLetters);
+//                    if(foundCount == game.getWords().size()){
+//
+//                    }
                 }
 
                 clearTempView();
@@ -382,6 +400,27 @@ public class ClassicEasyActivity extends AppCompatActivity {
         }
 //        return super.dispatchTouchEvent(event);
         return super.onTouchEvent(event);
+    }
+
+    private void handleCorrectAnswer(){
+        foundCount++;
+        times.add(timer.getNow());
+        // if it is a correct answer
+        // change the state of letter,
+        // changes the letterView.
+//                            addCorrectView();
+        placeColorfulBarAtWord();
+        // remove from the answer
+        setAnswerView(selectedLetters);
+        removeFromAnswers(selectedLetters);
+        if(foundCount == game.getWords().size()){
+            Intent intent = new Intent(ClassicEasyActivity.this, ClassicGameClearedActivity.class);
+            intent.putExtra("difficulty", game.getDifficulty());
+            intent.putExtra("hintCount", hintCount);
+            intent.putExtra("times", times);
+            startActivity(intent);
+            finish();
+        }
     }
 
     private String getRandomBarColor(){

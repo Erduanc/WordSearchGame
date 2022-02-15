@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/cleared_bg_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/pause_background" />
+
+    <Button
+        android:id="@+id/clear_btm_button"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="0dp"
+        android:paddingTop="0dp"
+        android:paddingRight="0dp"
+        android:paddingBottom="0dp"
+        app:backgroundTint="#00FFFFFF"
+        app:elevation="0dp"
+        app:icon="@drawable/pause_back_to_menu_button"
+        app:iconPadding="0dp"
+        app:iconTintMode="multiply"
+        app:layout_constraintEnd_toEndOf="@+id/cleared_bg_view"
+        app:layout_constraintStart_toStartOf="@+id/cleared_bg_view"
+        app:layout_constraintTop_toBottomOf="@+id/cleared_high_textview" />
+
+    <ImageView
+        android:id="@+id/cleared_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="60dp"
+        app:layout_constraintBottom_toBottomOf="@+id/cleared_bg_view"
+        app:layout_constraintEnd_toEndOf="@+id/cleared_bg_view"
+        app:layout_constraintStart_toStartOf="@+id/cleared_bg_view"
+        app:layout_constraintTop_toTopOf="@+id/cleared_bg_view"
+        app:srcCompat="@drawable/game_cleared_title" />
+
+    <TextView
+        android:id="@+id/clear_score_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textColor="#000000"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/cleared_bg_view"
+        app:layout_constraintStart_toStartOf="@+id/cleared_bg_view"
+        app:layout_constraintTop_toBottomOf="@+id/cleared_title" />
+
+    <TextView
+        android:id="@+id/cleared_high_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textColor="#000000"
+        android:textSize="11sp"
+        app:layout_constraintEnd_toEndOf="@+id/cleared_bg_view"
+        app:layout_constraintStart_toStartOf="@+id/cleared_bg_view"
+        app:layout_constraintTop_toBottomOf="@+id/clear_score_textview" />
+</androidx.constraintlayout.widget.ConstraintLayout>
