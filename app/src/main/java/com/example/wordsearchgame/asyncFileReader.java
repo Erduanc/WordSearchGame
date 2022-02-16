@@ -9,30 +9,60 @@ import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class asyncFileReader extends Thread{
     private Context myContext;
-    int high = 0;
-    int scoreNow;
-    Handler handler = null;
-    public asyncFileReader(Context context, int scoreNow, Handler handler){
+    private int high = 0;
+    private int scoreNow;
+    private int difficulty = 0;
+
+    private static final int TOPNUM = 10;
+    private static final String FILENAME = "classic_records.txt";
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+
+    private Handler handler = null; // This handler should be the same as in main thread.
+    public asyncFileReader(Context context, int scoreNow, int difficulty, Handler handler){
         super();
         myContext = context;
         this.scoreNow = scoreNow;
+        this.difficulty = difficulty;
         this.handler = handler;
     }
 
     @Override
     public void run() {
-//        updateRecords();
-        getHigh();
+//        deleteFile(FILENAME);
+        try {
+            updateRecords();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+//        Date date  = new Date();
+//        Log.d("DateNow", ""+date);
+
+//        writeToFile("data.txt", ""+scoreNow+"\t"+difficulty+"\t"+(new Date()));
+//        String content = readFileContent("data.txt");
+//        Log.d("readContent","readContent: "+content);
+
+
+
+
+//        getHigh();
         Looper.prepare();
 //        Handler handler = new Handler(Looper.myLooper());
         Message message = new Message();
@@ -45,8 +75,53 @@ public class asyncFileReader extends Thread{
 //        high = 3333;
 //    }
 
-//    private void updateRecords(){
-//        ArrayList<Integer> records = new ArrayList<Integer>();
+    private void updateRecords() throws ParseException {
+        // write data to file:
+        boolean isUpdated = false;
+        Date date = new Date();
+////        String dateString = dateFormat.format(date);
+//        Log.d("recordNowDate", "date: "+date);
+//        writeToFile(FILENAME, "append", ""+scoreNow+"\t"+"classic"+"\t"+difficulty+"\t"+dateString+"\n");
+        writeToFile(FILENAME, "append", null);
+
+        // read file to arrayList form of Record type instances:
+        ArrayList<Record> records = makeArrayContent(readFileContent(FILENAME));
+
+        // rearrange the order of the records
+        Record recordNow = new Record(scoreNow,"classic",  difficulty, date);
+        if(records.size() == 0 || recordNow.compareTo(records.get(0)) >= 0){
+            Log.d("updateRecord", recordNow.getScore()+": "+"Top");
+            records.add(0, recordNow);
+            isUpdated = true;
+        }
+        int size = records.size();
+        for(int i = 0; !isUpdated && i+1<size; i++){
+            if(recordNow.compareTo(records.get(i)) <= 0 && recordNow.compareTo(records.get(i+1)) >= 0){
+                Log.d("updateRecord",recordNow.getScore()+": "+(i+1));
+                records.add(i+1, recordNow);
+                isUpdated = true;
+            }
+        }
+        if(!isUpdated){
+            Log.d("updateRecord", recordNow.getScore()+": "+"last");
+            records.add(size, recordNow);
+        }
+
+        for(Record eachRecord:records){
+            Log.d("updateRecords","eachRecord: "+ eachRecord.toString());
+        }
+
+         // writeToFile:
+        for(int i = 0; i < TOPNUM && i < records.size(); i++){
+            if(i==0){
+                // use private mode so it can cover the old records (instead of using append mode).
+                writeToFile(FILENAME, "private", records.get(i).toString());
+            }else{
+                // then append to the end of last record.
+                writeToFile(FILENAME, "append", records.get(i).toString());
+            }
+        }
+
 //        InputStream inputStream = myContext.getResources().openRawResource(R.raw.classic_records);
 //        InputStreamReader inputStreamReader = null;
 //        try {
@@ -116,36 +191,171 @@ public class asyncFileReader extends Thread{
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-//    }
+    }
+
+    private ArrayList<Record> makeArrayContent(ArrayList<String> lines) throws ParseException {
+        Log.d("makeArrayContent", "in method");
+        ArrayList<Record> arrayRecord = new ArrayList<Record>();
+
+        for(String eachLine:lines){
+            /* int score \t String gameType \t int difficulty \t Date date \n */
+            int enterIndex = eachLine.indexOf("\n");
+            int lastIndex = 0; int nextIndex = eachLine.indexOf("\t");
+
+            int score = -1; String gameType = null; int difficulty = -1; Date date = null;
+            if(nextIndex != -1 && nextIndex > lastIndex && nextIndex != enterIndex){
+                score = Integer.parseInt(eachLine.substring(lastIndex, nextIndex));
+                Log.d("makeArrayContent", "score: "+score);
+            }
+            lastIndex = nextIndex+1; nextIndex = eachLine.indexOf("\t", lastIndex);
+            if(nextIndex != -1 && nextIndex > lastIndex && nextIndex != enterIndex){
+                gameType = eachLine.substring(lastIndex, nextIndex);
+                Log.d("makeArrayContent", "gameType: "+gameType);
+            }
+            lastIndex = nextIndex+1; nextIndex = eachLine.indexOf("\t", lastIndex);
+            if(nextIndex != -1 && nextIndex > lastIndex && nextIndex != enterIndex){
+                difficulty = Integer.parseInt(eachLine.substring(lastIndex, nextIndex));
+                Log.d("makeArrayContent", "difficulty: "+difficulty);
+            }
+            lastIndex = nextIndex+1; nextIndex = eachLine.indexOf("\n", lastIndex);
+            if(nextIndex != -1 && nextIndex > lastIndex && nextIndex == enterIndex){
+                String stringDate = eachLine.substring(lastIndex, nextIndex);
+//                String string = "2016-10-24 21:59:06";
+                date = dateFormat.parse(stringDate);
+                Log.d("makeArrayContent", "date: "+date);
+            }
+            // add to arrayList
+            if(score != -1 && gameType != null && difficulty != -1 && date != null){
+                Record record  = new Record(score, gameType, difficulty, date);
+                arrayRecord.add(record);
+                Log.d("makeArrayContent", "arrayListElement: "+record.toString());
+            }else{
+                Log.e("makeArrayContent", "failed to make arrayList records");
+                return null;
+            }
+        }
+
+//        stringRecord.substring(0,3);
+//        stringRecord.indexOf("\t", 0);
+//        // split by "\t"
+//        ArrayList<String> eachLine = new ArrayList<String>();
+//        int lastIndex = 0; int currentIndex = stringRecord.indexOf("\n");
+//        while(currentIndex > lastIndex){
+//
+//        }
+
+        return arrayRecord;
+    }
 
     private void getHigh(){
-        InputStream inputStream = myContext.getResources().openRawResource(R.raw.classic_records);
-        InputStreamReader inputStreamReader = null;
-        try {
-            inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-        //BufferedReader bufferedReader = null;
 
-        int wordNum = 0, lineIndex = 0;
-        String input = "";
-        while (true) {
-            try {
-                if ((input = bufferedReader.readLine()) == null) break;
-                int recordNum = Integer.parseInt(input);
-                if(recordNum > high){
-                    high = recordNum;
+
+//        InputStream inputStream = myContext.getResources().openRawResource(R.raw.classic_records);
+//        InputStreamReader inputStreamReader = null;
+//        try {
+//            inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+//        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+//        //BufferedReader bufferedReader = null;
+//
+//        int wordNum = 0, lineIndex = 0;
+//        String input = "";
+//        while (true) {
+//            try {
+//                if ((input = bufferedReader.readLine()) == null) break;
+//                int recordNum = Integer.parseInt(input);
+//                if(recordNum > high){
+//                    high = recordNum;
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        try {
+//            inputStream.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+    }
+
+    private ArrayList<String> readFileContent(String fileName){
+        Log.d("readContent", "in method");
+        FileInputStream inputStream = null;
+        BufferedReader bufferedReader = null;
+//        StringBuilder content = new StringBuilder();
+        ArrayList<String> lines = new ArrayList<String>();
+        try{
+            inputStream = myContext.openFileInput(fileName);
+            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            String line = "";
+            while((line = bufferedReader.readLine())!=null){
+                Log.d("readContent", "line:" + line);
+                lines.add(line+"\n");
+//                content.append(line);
+//                content.append("\n"); // cuz readLine will remove \n and \r automatically.
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if(bufferedReader != null){
+                try {
+                    bufferedReader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
+            }
+        }
+        if(lines == null){
+            Log.d("readFileContent","lines: null");
+        }else{
+            for(String eachLine: lines){
+                Log.d("readFileContent", "lines"+ eachLine);
+            }
+        }
+        return lines;
+    }
+
+    private void writeToFile(String fileName, String mode, String data){
+        FileOutputStream outputStream=null;
+        BufferedWriter bufferedWriter=null;
+        try{
+            if(mode == "private"){
+                outputStream = myContext.openFileOutput(fileName, Context.MODE_PRIVATE);
+            }else{
+                outputStream = myContext.openFileOutput(fileName, Context.MODE_APPEND);
+            }
+
+            bufferedWriter =new BufferedWriter(new OutputStreamWriter(outputStream));
+            if(data == null){
+                return;
+            }else{
+                bufferedWriter.write(data);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                if (bufferedWriter!=null){
+                    bufferedWriter.close();
+                }
+
+            }catch (IOException e){
                 e.printStackTrace();
             }
         }
-        try {
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+    }
+
+    private void deleteFile(String fileName){
+        if(myContext.deleteFile(fileName)) {
+            Log.d("deleteFile", "delete: "+ fileName + " successfully");
+        } else {
+            Log.d("deleteFile", "delete: " + fileName +"failed");
         }
     }
 }

@@ -102,7 +102,7 @@ public class ClassicGameClearedActivity extends AppCompatActivity {
 //        };
 //        highThread.start();
 
-        Thread fileReader = new asyncFileReader(this, scoreNow, handler);
+        Thread fileReader = new asyncFileReader(this, scoreNow, difficulty, handler);
         fileReader.start();
         highView.setTypeface(typeface);
     }
