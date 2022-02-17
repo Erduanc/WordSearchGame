@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/record_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/history_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/history_bar_1" />
+
+    <TextView
+        android:id="@+id/rank_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="17dp"
+        android:layout_marginLeft="17dp"
+        android:text="1"
+        android:textColor="#000000"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/history_bar"
+        app:layout_constraintStart_toStartOf="@+id/history_bar"
+        app:layout_constraintTop_toTopOf="@+id/history_bar" />
+
+    <TextView
+        android:id="@+id/score_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1024"
+        android:textColor="#000000"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/history_bar"
+        app:layout_constraintEnd_toStartOf="@+id/mode_view"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/rank_view"
+        app:layout_constraintTop_toTopOf="@+id/history_bar" />
+
+    <TextView
+        android:id="@+id/mode_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="classic"
+        android:textColor="#000000"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/diffi_view"
+        app:layout_constraintEnd_toStartOf="@+id/date_view"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/score_view"
+        app:layout_constraintTop_toTopOf="@+id/score_view" />
+
+    <TextView
+        android:id="@+id/diffi_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="easy"
+        android:textColor="#000000"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/score_view"
+        app:layout_constraintStart_toStartOf="@+id/mode_view"
+        app:layout_constraintTop_toBottomOf="@+id/mode_view" />
+
+    <TextView
+        android:id="@+id/date_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textColor="#000000"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="@+id/history_bar"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/mode_view"
+        app:layout_constraintTop_toTopOf="@+id/score_view" />
+</androidx.constraintlayout.widget.ConstraintLayout>

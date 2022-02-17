@@ -24,56 +24,68 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class asyncFileReader extends Thread{
+public class AsyncFileManager extends Thread{
     private Context myContext;
     private int high = 0;
     private int scoreNow;
     private int difficulty = 0;
 
     private static final int TOPNUM = 10;
-    private static final String FILENAME = "classic_records.txt";
+    private String FILENAME = "classic_records.txt";
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
+    private short task = 0;
+
     private Handler handler = null; // This handler should be the same as in main thread.
-    public asyncFileReader(Context context, int scoreNow, int difficulty, Handler handler){
+    public AsyncFileManager(Context context, int scoreNow, int difficulty, Handler handler){
         super();
         myContext = context;
         this.scoreNow = scoreNow;
         this.difficulty = difficulty;
         this.handler = handler;
+        this.task = 0;
+    }
+    public AsyncFileManager(Context context, Handler handler, String fileName){
+        super();
+        myContext = context;
+        this.handler = handler;
+        this.FILENAME = fileName;
+        this.task = 1;
     }
 
     @Override
     public void run() {
 //        deleteFile(FILENAME);
-        try {
-            updateRecords();
-        } catch (ParseException e) {
-            e.printStackTrace();
+        if(task==0){
+            try {
+                updateRecords();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            Looper.prepare();
+            Message message = new Message();
+            message.what = 0;
+            message.obj = ""+high;
+            handler.sendMessage(message);
+            Log.d("Message", "0: threadToMain");
+        }else if(task == 1){
+            try {
+                ArrayList<Record> records = makeArrayContent(readFileContent(FILENAME));
+                if(records != null){
+                    Looper.prepare();
+                    Message message = new Message();
+                    message.what = 1;
+                    message.obj = records;
+                    handler.sendMessage(message);
+                    Log.d("Message", "1: threadToMain");
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
-
-//        Date date  = new Date();
-//        Log.d("DateNow", ""+date);
-
-//        writeToFile("data.txt", ""+scoreNow+"\t"+difficulty+"\t"+(new Date()));
-//        String content = readFileContent("data.txt");
-//        Log.d("readContent","readContent: "+content);
-
-
-
-
-//        getHigh();
-        Looper.prepare();
-//        Handler handler = new Handler(Looper.myLooper());
-        Message message = new Message();
-        message.obj = ""+high;
-        handler.sendMessage(message);
-        Log.d("Message", "threadToMain");
     }
 
-//    private void getHigh(){
-//        high = 3333;
-//    }
 
     private void updateRecords() throws ParseException {
         // write data to file:
@@ -115,6 +127,7 @@ public class asyncFileReader extends Thread{
         for(int i = 0; i < TOPNUM && i < records.size(); i++){
             if(i==0){
                 // use private mode so it can cover the old records (instead of using append mode).
+                high = records.get(i).getScore();
                 writeToFile(FILENAME, "private", records.get(i).toString());
             }else{
                 // then append to the end of last record.

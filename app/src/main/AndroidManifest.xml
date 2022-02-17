@@ -9,21 +9,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WordSearchGame">
-        <activity android:name=".GamePausedActivity"></activity>
+        <activity android:name=".GamePausedActivity" />
         <activity
             android:name=".HistoryActivity"
-            android:launchMode="singleTask"></activity>
+            android:launchMode="singleTask" />
         <activity
             android:name=".ClassicLevelActivity"
-            android:launchMode="singleTask"></activity>
+            android:launchMode="singleTask" />
         <activity
             android:name=".ClassicEasyActivity"
-            android:launchMode="singleTask">
-        </activity>
+            android:launchMode="singleTask"></activity>
         <activity
             android:name=".ClassicGameClearedActivity"
-            android:launchMode="singleTask">
-        </activity>
+            android:launchMode="singleTask"></activity>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTask">

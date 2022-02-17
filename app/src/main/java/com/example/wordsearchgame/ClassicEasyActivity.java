@@ -34,12 +34,13 @@ public class ClassicEasyActivity extends AppCompatActivity {
     int foundCount = 0;
     int hintCount = 0;
 
+    private byte[] lock = new byte[0];
+    private final int LOCKTIME = 50;
+
 //    public ArrayList<Letter> getSelectedLetters(){
 //        return selectedLetters;
 //    }
-//    public synchronized void increaseI(){
-//        i++;
-//    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -399,6 +400,13 @@ public class ClassicEasyActivity extends AppCompatActivity {
                 break;
         }
 //        return super.dispatchTouchEvent(event);
+        synchronized (lock){
+            try{
+                lock.wait(LOCKTIME);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         return super.onTouchEvent(event);
     }
 

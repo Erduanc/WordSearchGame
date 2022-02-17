@@ -4,14 +4,12 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.Serializable;
@@ -66,7 +64,9 @@ public class ClassicGameClearedActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg){
                 Log.d("handleMsg", "handleMsg");
-                highView.setText(""+msg.obj);
+                if(msg.what == 0){
+                    highView.setText((""+msg.obj));
+                }
 //                if((msg.obj) instanceof Integer){
 //                    Log.d("msg.obj", ""+msg.obj);
 //                    highView.setText(""+msg.obj);
@@ -102,7 +102,7 @@ public class ClassicGameClearedActivity extends AppCompatActivity {
 //        };
 //        highThread.start();
 
-        Thread fileReader = new asyncFileReader(this, scoreNow, difficulty, handler);
+        Thread fileReader = new AsyncFileManager(this, scoreNow, difficulty, handler);
         fileReader.start();
         highView.setTypeface(typeface);
     }
