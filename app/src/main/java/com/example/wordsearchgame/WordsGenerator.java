@@ -18,9 +18,9 @@ public class WordsGenerator {
     private int wordListLen; // Length of the word list
     private Context myContext;
     //String filePath;
-    public static final int EASYLISTLEN = 10; // <9*9
-    public static final int MEDIUMLISTLEN = 100; // <12*12
-    public static final int HARDLISTLEN = 150; // List of words with length <15(game board:15*15)
+    public static final int EASYLISTLEN = 40; // <9*9
+    public static final int MEDIUMLISTLEN = 40; // <12*12
+    public static final int HARDLISTLEN = 40; // List of words with length <15(game board:15*15)
 
     public WordsGenerator(int difficulty, Context context){
         setDifficulty(difficulty);

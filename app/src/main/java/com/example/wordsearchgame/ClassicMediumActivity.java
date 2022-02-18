@@ -19,14 +19,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-//import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public class ClassicEasyActivity extends AppCompatActivity {
+public class ClassicMediumActivity extends AppCompatActivity {
     private int[] direction = {0,0};
     private ArrayList<Letter> selectedLetters = new ArrayList<Letter>();
     private Game game = null;
@@ -51,11 +49,11 @@ public class ClassicEasyActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_classic_easy);
+        setContentView(R.layout.activity_classic_medium);
 
         // get data from last activity: difficulty level:
         Intent intent = getIntent();
-        int difficulty = intent.getIntExtra("difficulty", 0);
+        int difficulty = intent.getIntExtra("difficulty", 1);
 
         //                game = new Game(difficulty, context, "Classic");
         // set the font and content of answers (textViews) below the grid
@@ -75,7 +73,8 @@ public class ClassicEasyActivity extends AppCompatActivity {
 //            String rowString = rowInt + "";
                         for (Letter eachLetter : eachRow) {
                             // get the letterImageView of the letter at (rowInt, colInt) by id
-                            int orgLetterImageId = resources.getIdentifier("letter_easy_" + colInt + rowInt, "id", getPackageName());
+                            int orgLetterImageId = resources.getIdentifier("letter_medium_" + colInt+"_" + rowInt, "id", getPackageName());
+                            Log.d("letter_medium_","letter_medium_" + colInt+"_" + rowInt);
                             ImageView letterImageView = (ImageView) findViewById(orgLetterImageId);
                             // get the letterImageView of the letter in the matrix to replace the letter at (rowInt, colInt)
                             int newLetterImageId;
@@ -96,7 +95,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
                                 }
                             }
 
-//                Button buttonHint = (Button)findViewById(R.id.button_hint_easy);
+//                Button buttonHint = (Button)findViewById(R.id.button_hint_medium);
                             // replace the old view with the new view
                             letterImageView.setImageResource(newLetterImageId);
                             // post, then get and set the positions of letterImageView:
@@ -132,7 +131,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
                         public void run(){
                             for(int i=0; i < game.getWords().size(); i++){
                                 // get TextView
-                                int wordTextID = resources.getIdentifier("word_easy_" + (i+1), "id", getPackageName());
+                                int wordTextID = resources.getIdentifier("word_medium_" + (i+1), "id", getPackageName());
                                 if(wordTextID != 0){
                                     TextView wordText = (TextView)findViewById(wordTextID);
                                     // set content
@@ -146,7 +145,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
                     }.start();
 
                     // init buttons: hint:
-                    Button buttonHint = (Button)findViewById(R.id.button_hint_easy);
+                    Button buttonHint = (Button)findViewById(R.id.button_hint_medium);
                     buttonHint.setOnClickListener(new View.OnClickListener(){
                         @Override
                         public void onClick(View v){
@@ -205,7 +204,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
 
 
         //init buttons: pause:
-        Button buttonPause = (Button)findViewById(R.id.button_pause_easy);
+        Button buttonPause = (Button)findViewById(R.id.button_pause_medium);
         buttonPause.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -217,7 +216,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
 
         // init Timer:
 //        timer = new MyChronometer(this);
-        timer =  (MyChronometerView) findViewById(R.id.my_chronometer_classic_easy);
+        timer =  (MyChronometerView) findViewById(R.id.my_chronometer_classic_medium);
         timer.start();
 //        if(timer != null){
 //            ConstraintLayout timerLayout = findViewById(R.id.timer_layout);
@@ -229,7 +228,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
     private void setHintView(Word word){
         Resources resources = getResources();
         // task1: set letterView's source to white
-        int letterImageViewId = resources.getIdentifier("letter_easy_" + word.getStartPos()[1] + word.getStartPos()[0], "id", getPackageName());
+        int letterImageViewId = resources.getIdentifier("letter_medium_" + word.getStartPos()[1]+"_" + word.getStartPos()[0], "id", getPackageName());
         ImageView letterImageView = findViewById(letterImageViewId);
         int newSrcId = getLetterSrcIdByLetter(word.getWordLetters().get(0), "_white");
         letterImageView.setImageResource(newSrcId);
@@ -246,27 +245,27 @@ public class ClassicEasyActivity extends AppCompatActivity {
         Log.d("firstLetterPos", ""+word.getWordLetters().get(0).getPos()[0]+", "+word.getWordLetters().get(0).getPos()[1]);
         Letter letter = game.getLetterMatrix().getMat()[word.getWordLetters().get(0).getPos()[0]][word.getWordLetters().get(0).getPos()[1]];
 
-//        placeImageViewAtLetter(word.getWordLetters().get(0), barParam2, "hint_"+(directX+1)+(directY+1),"ghost_classic_easy_layout");
+//        placeImageViewAtLetter(word.getWordLetters().get(0), barParam2, "hint_"+(directX+1)+(directY+1),"ghost_classic_medium_layout");
         int opt = directX + directY*3;
         Log.d("optHint", ""+opt+": "+directX+", "+directY);
         switch(opt){
             case 1:
-                placeImageViewAtLetter(letter, barParam1, "hint_"+(directX+1)+(directY+1),"ghost_classic_easy_layout");
+                placeImageViewAtLetter(letter, barParam1, "hint_"+(directX+1)+(directY+1),"ghost_classic_medium_layout");
                 break;
             case -3:
-                placeImageViewAtLetter(letter, barParam1, "hint_"+(directX+1)+(directY+1),"ghost_classic_easy_layout");
+                placeImageViewAtLetter(letter, barParam1, "hint_"+(directX+1)+(directY+1),"ghost_classic_medium_layout");
                 break;
             case -1:
-                placeImageViewAtLetter(letter, new int[]{barParam2[0], barParam1[0]}, "hint_"+(directX+1)+(directY+1),"ghost_classic_easy_layout");
+                placeImageViewAtLetter(letter, new int[]{barParam2[0], barParam1[0]}, "hint_"+(directX+1)+(directY+1),"ghost_classic_medium_layout");
                 break;
             case 3:
-                placeImageViewAtLetter(letter, new int[]{barParam1[0], barParam2[0]}, "hint_"+(directX+1)+(directY+1),"ghost_classic_easy_layout");
+                placeImageViewAtLetter(letter, new int[]{barParam1[0], barParam2[0]}, "hint_"+(directX+1)+(directY+1),"ghost_classic_medium_layout");
                 break;
             case 2:
             case -2:
             case -4:
             case 4:
-                placeImageViewAtLetter(letter, barParam1, "hint_"+(directX+1)+(directY+1),"ghost_classic_easy_layout");
+                placeImageViewAtLetter(letter, barParam1, "hint_"+(directX+1)+(directY+1),"ghost_classic_medium_layout");
                 break;
         }
     }
@@ -475,7 +474,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
         setAnswerView(selectedLetters);
         removeFromAnswers(selectedLetters);
         if(foundCount == game.getWords().size()){
-            Intent intent = new Intent(ClassicEasyActivity.this, ClassicGameClearedActivity.class);
+            Intent intent = new Intent(ClassicMediumActivity.this, ClassicGameClearedActivity.class);
             intent.putExtra("difficulty", game.getDifficulty());
             intent.putExtra("hintCount", hintCount);
             intent.putExtra("times", times);
@@ -507,7 +506,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
         Log.d("imageViewId2", ""+imageViewId);
         if(imageViewId != 0){
             // create imageView
-            ImageView imageView = new ImageView(ClassicEasyActivity.this);
+            ImageView imageView = new ImageView(ClassicMediumActivity.this);
             imageView.setImageResource(imageViewId);
             if(imageView != null){
                 // set Position
@@ -530,7 +529,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
         if(param.length!=2){ return false; }
 
         Resources resources = getResources();
-        int letterViewID = resources.getIdentifier("letter_easy_" + letter.getPos()[1] + letter.getPos()[0], "id", getPackageName());
+        int letterViewID = resources.getIdentifier("letter_medium_" + letter.getPos()[1]+"_" + letter.getPos()[0], "id", getPackageName());
 
         ImageView letterImageView = findViewById(letterViewID);
         int letterWidth = letterImageView.getWidth();
@@ -570,7 +569,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
 
     private void placeColorfulBarAtLetter(Letter letter, String order, String color){
         Resources resources = getResources();
-        String viewGroupName = "ghost_classic_easy_layout";
+        String viewGroupName = "ghost_classic_medium_layout";
         String imageViewName = "";
 
         int opt = direction[0] + direction[1] * 3;
@@ -760,7 +759,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
             Log.d("setAnswerView","in loop");
             if(game.getWords().get(i).getStatus() == 0 && game.getWords().get(i).equals(selectedSeries)){
                 Log.d("setAnswerView","equals");
-                int textViewId = resources.getIdentifier("word_easy_"+(i+1),"id",getPackageName());
+                int textViewId = resources.getIdentifier("word_medium_"+(i+1),"id",getPackageName());
                 if(textViewId != 0){
                     Log.d("setAnswerView","not 0");
                     TextView textView = (TextView) findViewById(textViewId);
@@ -799,7 +798,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
     private void setTempView(Letter letter){
         // given the letter, find the view corresponded
         Resources resources = getResources();
-        int orgLetterImageId = resources.getIdentifier("letter_easy_" + letter.getPos()[1] + letter.getPos()[0], "id", getPackageName());
+        int orgLetterImageId = resources.getIdentifier("letter_medium_" + letter.getPos()[1]+"_" + letter.getPos()[0], "id", getPackageName());
         ImageView letterImageView = (ImageView) findViewById(orgLetterImageId);
         // for the view of letter found, set the view to the temp one.
         int newLetterImageId = 0;
@@ -826,7 +825,7 @@ public class ClassicEasyActivity extends AppCompatActivity {
         Resources resources = getResources();
         for(Letter letter:selectedLetters){
 //            Log.d("clearTempView", ""+letter.getCharLetter());
-            int orgLetterImageId = resources.getIdentifier("letter_easy_" + letter.getPos()[1] + letter.getPos()[0], "id", getPackageName());
+            int orgLetterImageId = resources.getIdentifier("letter_medium_" + letter.getPos()[1]+"_" + letter.getPos()[0], "id", getPackageName());
             ImageView letterImageView = (ImageView) findViewById(orgLetterImageId);
             // for the view of letter found, set the view to the original one.
             int newLetterImageId = 0;

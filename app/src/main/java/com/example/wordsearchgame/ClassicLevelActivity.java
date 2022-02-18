@@ -38,6 +38,17 @@ public class ClassicLevelActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        Button buttonMedium = (Button)findViewById(R.id.button_medium);
+        buttonMedium.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent(ClassicLevelActivity.this, ClassicMediumActivity.class);
+                intent.putExtra("difficulty", 1);
+                startActivity(intent);
+                finish();
+            }
+        });
 //
 //        Button buttonMedium = (Button)findViewById(R.id.button_medium);
 //        buttonMedium.setOnClickListener(new View.OnClickListener(){

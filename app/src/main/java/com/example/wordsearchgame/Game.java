@@ -1,6 +1,7 @@
 package com.example.wordsearchgame;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,6 +17,8 @@ public class Game {
     private Record record;
     private String gameType;
     private int difficulty;
+
+    private final int MAXATTEMP = 60;
 
 
 //    private final static int MAXSCORE = 9999;
@@ -60,7 +63,17 @@ public class Game {
 
     public void setLetterMatrix(){
         this.letterMatrix = new LetterMatrix(this.myContext, this.difficulty, this.words);
-        letterMatrix.generateMatrix();
+        int attempt = 0;
+        while(!letterMatrix.getIfSuccessful() && attempt < MAXATTEMP){
+            setWords(generateWords(difficulty, myContext));
+            this.letterMatrix = new LetterMatrix(this.myContext, this.difficulty, this.words);
+            letterMatrix.generateMatrix();
+            attempt++;
+        }
+        if(!letterMatrix.getIfSuccessful()){
+            this.letterMatrix = null;
+        }
+        Log.d("game", "re_attempt for: "+attempt + " times");
     }
     public LetterMatrix getLetterMatrix(){ return this.letterMatrix; }
 
